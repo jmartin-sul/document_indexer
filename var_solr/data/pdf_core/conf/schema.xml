@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema name="test" version="1.5">
+  <types>
+    <fieldtype name="string"  class="solr.StrField" sortMissingLast="true" omitNorms="true" />
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0" />
+
+    <fieldType name="text" class="solr.TextField">
+      <analyzer>
+        <tokenizer class="solr.StandardTokenizerFactory" />
+        <filter class="solr.StandardFilterFactory" />
+        <filter class="solr.LowerCaseFilterFactory" />
+        <filter class="solr.StopFilterFactory" />
+        <filter class="solr.PorterStemFilterFactory" />
+      </analyzer>
+    </fieldType>
+
+    <fieldType name="descendant_path" class="solr.TextField">
+      <analyzer type="index">
+        <tokenizer class="solr.PathHierarchyTokenizerFactory" delimiter="/" />
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="solr.KeywordTokenizerFactory" />
+      </analyzer>
+    </fieldType>
+  </types>
+
+  <!-- see https://github.com/ICIJ/extract/blob/4f96d5206751544eb682f054c8ee884d9b789f1a/extract-lib/src/main/java/org/icij/spewer/FieldNames.java#L32-L43 -->
+  <fields>
+    <field name="_version_" type="long" indexed="true" stored="true" />
+    <field name="extract_id" type="string" indexed="true" stored="true" multiValued="false" required="true" />
+    <field name="extract_level" type="string" indexed="true" stored="true" multiValued="false" />
+    <field name="extract_parent_id" type="string" indexed="true" stored="true" multiValued="false" />
+    <field name="extract_base_type" type="string" indexed="true" stored="true" />
+    <field name="extract_root" type="descendant_path" indexed="true" stored="true" multiValued="true" />
+    <field name="extract_paths" type="descendant_path" indexed="true" stored="true" multiValued="true" />
+    <field name="extract_parent_paths" type="descendant_path" indexed="true" stored="true" multiValued="true" />
+    <field name="text" type="text" indexed="true" stored="false" />
+
+    <!-- Main body of document. NOTE: This field is not indexed by default, since it is also copied to "text" using copyField below. This is to save space. Use this field for returning and highlighting document content. Use the "text" field to search the content. -->
+    <field name="tika_content" type="text" indexed="false" stored="true" />
+
+    <!-- Dynamic fields for arbitrary metadata. -->
+    <dynamicField name="metadata_*" type="string" indexed="true"  stored="true" />
+    <dynamicField name="tika_metadata_*" type="string" indexed="true"  stored="true" />
+    <dynamicField name="tag_*" type="string" indexed="true"  stored="true" />
+    <dynamicField name="*_iso8601" type="string" indexed="true"  stored="true" />
+  </fields>
+
+  <defaultSearchField>text</defaultSearchField>
+
+  <!-- Field to use to determine and enforce document uniqueness. -->
+  <uniqueKey>extract_id</uniqueKey>
+
+  <!-- Text field to search by default. -->
+  <copyField source="tika_content" dest="text" />
+</schema>
