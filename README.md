@@ -68,4 +68,21 @@ $ java -jar extract-cli/target/extract-cli-3.8.1.jar spew --ocr no -o solr -s 'h
 
 ## explore your indexed PDFs
 
+### done already in this repo, just in case it helps spin up similar in the future...
 
+#### install rails
+
+https://guides.rubyonrails.org/getting_started.html
+
+`rails new . --skip-spring --skip-listen`
+
+#### install blacklight
+
+https://github.com/projectblacklight/blacklight/wiki/Quickstart
+* confirm the dependencies (ruby, solr, node, yarn, etc) are installed
+* go to the "Creating a new application the hard way" section -- https://github.com/projectblacklight/blacklight/wiki/Quickstart#creating-a-new-application-the-hard-way
+* skip solr_wrapper because you're already running solr in docker
+* `rails generate blacklight:install --devise --solr_version=latest`
+* `bin/rails db:migrate`
+* `rails s`
+* modify the default catalog controller a bunch because it expects a totally different schema than you get from tika throwing PDFs at solr
