@@ -1,4 +1,4 @@
-# indexing PDF text and metadata for analysis
+# indexing document text and metadata for analysis
 
 using a bunch of open source tools to examine a whole bunch of documents
 * Apache Tika (document text and metadata processing)
@@ -9,10 +9,10 @@ using a bunch of open source tools to examine a whole bunch of documents
 ## setup the processing tools
 
 * `docker compose up` with the default `docker-compose.yml` (will create `var_solr` if it doesn't exist)
-* `docker exec -it pdf_indexer_solr_1 solr create_core -c pdf_core` from host CLI
+* `docker exec -it document_indexer_solr_1 solr create_core -c document_core` from host CLI
   * see https://github.com/docker-solr/docker-solr/#manually
 * add below `lib` and `requestHandler` stanzas to the appropriate spots in the `solrconfig.xml` that core creation generated
-* _not sure this is necessary?_ save the example linked here as `schema.xml` (sibling of `solrconfig.xml` in `var_solr/data/pdf_core/conf`, there shouldn't be one there yet to overwrite)
+* _not sure this is necessary?_ save the example linked here as `schema.xml` (sibling of `solrconfig.xml` in `var_solr/data/document_core/conf`, there shouldn't be one there yet to overwrite)
   * https://github.com/ICIJ/extract/wiki/Metadata#example-solr-schema
 * install apache tika (can be done via homebrew on mac)
   * https://tika.apache.org/2.0.0/gettingstarted.html
@@ -46,12 +46,12 @@ $ mvn install -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
 ```
 
 
-## index some PDFs
+## index some documents
 
 ### test on one PDF using `curl`
 
 ```sh
-$ `curl 'http://localhost:8983/solr/pdf_core/update/extract?literal.id=helloworld&commit=true' -F "myfile=@test.pdf"`
+$ `curl 'http://localhost:8983/solr/document_core/update/extract?literal.id=helloworld&commit=true' -F "myfile=@test.pdf"`
 {
   "responseHeader":{
     "status":0,
@@ -63,7 +63,7 @@ $ `curl 'http://localhost:8983/solr/pdf_core/update/extract?literal.id=helloworl
 run something like:
 ```sh
 # from the extract project directory after building
-$ java -jar extract-cli/target/extract-cli-3.8.1.jar spew --ocr no -o solr -s 'http://localhost:8983/solr/pdf_core' --commitInterval 500  'my_cool_pdf_directory'
+$ java -jar extract-cli/target/extract-cli-3.8.1.jar spew --ocr no -o solr -s 'http://localhost:8983/solr/document_core' --commitInterval 500  'my_cool_pdf_directory'
 ```
 
 ## explore your indexed PDFs
