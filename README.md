@@ -71,7 +71,7 @@ $ java -jar extract-cli/target/extract-cli-3.8.1.jar spew --ocr no -o solr -s 'h
 
 extract might be overkill for me.  try calling tika on the PDFs (since those are the documents you have at the moment) and then indexing fields of my choice from parsing, using python or ruby.  i had trouble figuring out how to get tika to index the fields i wanted.
 
-both pysolr and rsolr seem find, tika bindings for python seem better than those for ruby, so prob easier to write indexing code in python than ruby?  would be easy to do simple text extraction using tika and create a document based on that.  could generate same document IDs as ICIJ extract (i think just a hash of the document content?).
+both pysolr and rsolr seem fine, tika bindings for python seem better than those for ruby, so prob easier to write indexing code in python than ruby?  would be easy to do simple text extraction using tika and create a document based on that.  could generate same document IDs as ICIJ extract (i think just a hash of the document content?).
 
 https://github.com/ICIJ/extract/blob/master/extract-lib/src/main/java/org/icij/extract/document/DocumentFactory.java#L44
 
